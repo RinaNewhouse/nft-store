@@ -1,0 +1,47 @@
+'use client';
+
+import { useEffect } from "react";
+import Image from "next/image";
+import ExploreItems from "../components/explore/ExploreItems";
+
+export default function Explore() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div id="wrapper">
+      <div className="no-bottom no-top" id="content">
+        <div id="top"></div>
+
+        <section
+          id="subheader"
+          className="text-light"
+          style={{ background: `url("/images/subheader.jpg") top` }}
+        >
+          <div className="center-y relative text-center">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-12 text-center">
+                  <h1 data-aos="fade-up">Explore</h1>
+                </div>
+                <div className="clearfix"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="section">
+          <div className="container">
+            <div className="row">
+              <div data-aos="fade-up" data-aos-delay="200">
+                <ExploreItems />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
