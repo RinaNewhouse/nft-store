@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@clerk/nextjs": "^6.34.1",
     "aos": "^2.3.4",
     "firebase": "^9.8.4",
     "next": "^16.0.0",
