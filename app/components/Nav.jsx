@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaTimes } from "react-icons/fa";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 
 const Nav = () => {
   const openNav = () => {
@@ -51,15 +52,23 @@ const Nav = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      href="#"
-                      className="btn-main connect-wallet"
-                      onClick={() =>
-                        alert("This feature has not been implemented yet")
-                      }
-                    >
-                      Connect wallet
-                    </Link>
+                    <SignedOut>
+                      <SignInButton mode="modal">
+                        <button className="btn-main connect-wallet">
+                          Sign In
+                        </button>
+                      </SignInButton>
+                    </SignedOut>
+                    <SignedIn>
+                      <UserButton 
+                        appearance={{
+                          elements: {
+                            avatarBox: "w-10 h-10",
+                            userButtonPopoverCard: "shadow-lg"
+                          }
+                        }}
+                      />
+                    </SignedIn>
                   </li>
                 </ul>
 
@@ -82,6 +91,20 @@ const Nav = () => {
           <Link href="/explore" onClick={() => closeNav()}>
             Explore
           </Link>
+        </li>
+        <li className="dropdown__list">
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button onClick={() => closeNav()} className="btn-main" style={{ margin: '10px 0', width: '100%' }}>
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <div onClick={() => closeNav()}>
+              <UserButton />
+            </div>
+          </SignedIn>
         </li>
         <li className="close__button">
           <button onClick={() => closeNav()}>
