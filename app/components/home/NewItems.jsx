@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import CountdownTimer from '../UI/CountdownTimer';
 import Slider from 'react-slick';
+import StripeCheckout from '../StripeCheckout';
 
 const NewItems = () => {
   const [nftItems, setNftItems] = useState([]);
@@ -164,7 +165,14 @@ const NewItems = () => {
                       <div className="nft__item_wrap">
                         <div className="nft__item_extra">
                           <div className="nft__item_buttons">
-                            <button>Buy Now</button>
+                            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} style={{ width: '100%' }}>
+                              <StripeCheckout
+                                price={item.price || 0}
+                                nftId={item.nftId || item.id}
+                                nftTitle={item.title}
+                                nftImage={item.nftImage || item.image}
+                              />
+                            </div>
                             <div className="nft__item_share">
                               <h4>Share</h4>
                               <a href="" target="_blank" rel="noreferrer">

@@ -25,20 +25,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { price, nftId, nftTitle, nftImage } = await request.json();
+    const { price, nftId, nftTitle, nftImage, cartItems } = await request.json();
 
-    if (!price || !nftId) {
+    // Ensure minimum price
+    const priceNum = typeof price === 'number' ? price : parseFloat(price);
+    if (!priceNum || priceNum < 0.5) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Minimum order amount is $0.50' },
         { status: 400 }
       );
     }
 
     // Create Stripe Checkout Session
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
+    
+    // If cartItems exist, create line items from cart
+    let lineItems;
+    let cancelUrl;
+    let metadata: { userId: string; nftId?: string; cartItems?: string } = { userId };
+
+    if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
+      // Cart checkout - multiple items
+      lineItems = cartItems.map((item: any) => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.title || 'NFT',
+            images: item.image ? [item.image] : [],
+            description: `NFT ID: ${item.nftId}`,
+          },
+          unit_amount: Math.round(item.priceUSD * 100), // Convert to cents
+        },
+        quantity: item.quantity || 1,
+      }));
+      cancelUrl = `${request.nextUrl.origin}/explore`;
+      metadata.cartItems = JSON.stringify(cartItems.map((item: any) => item.nftId));
+    } else {
+      // Single item checkout
+      if (!nftId) {
+        return NextResponse.json(
+          { error: 'Missing required fields' },
+          { status: 400 }
+        );
+      }
+      lineItems = [
         {
           price_data: {
             currency: 'usd',
@@ -47,18 +77,22 @@ export async function POST(request: NextRequest) {
               images: nftImage ? [nftImage] : [],
               description: `NFT ID: ${nftId}`,
             },
-            unit_amount: Math.round(price * 100), // Convert to cents
+            unit_amount: Math.round(priceNum * 100), // Convert to cents
           },
           quantity: 1,
         },
-      ],
+      ];
+      cancelUrl = `${request.nextUrl.origin}/item-details/${nftId}`;
+      metadata.nftId = nftId;
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
       mode: 'payment',
       success_url: `${request.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${request.nextUrl.origin}/item-details/${nftId}`,
-      metadata: {
-        userId,
-        nftId,
-      },
+      cancel_url: cancelUrl,
+      metadata,
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url });

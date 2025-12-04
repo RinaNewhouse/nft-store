@@ -3,10 +3,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaShoppingCart } from "react-icons/fa";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { useCart } from '../contexts/CartContext';
 
 const Nav = () => {
+  const { itemCount, openCart } = useCart();
+
   const openNav = () => {
     document.body.classList += " menu__open";
   };
@@ -52,6 +55,45 @@ const Nav = () => {
                     </Link>
                   </li>
                   <li>
+                    <button
+                      onClick={openCart}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        padding: '8px',
+                        marginRight: '10px',
+                        color: '#0d0c22',
+                        fontSize: '20px',
+                      }}
+                      title="Shopping Cart"
+                    >
+                      <FaShoppingCart />
+                      {itemCount > 0 && (
+                        <span
+                          style={{
+                            position: 'absolute',
+                            top: '0',
+                            right: '0',
+                            backgroundColor: '#ff4444',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: '18px',
+                            height: '18px',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {itemCount}
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                  <li>
                     <SignedOut>
                       <SignInButton mode="modal">
                         <button className="btn-main connect-wallet">
@@ -91,6 +133,29 @@ const Nav = () => {
           <Link href="/explore" onClick={() => closeNav()}>
             Explore
           </Link>
+        </li>
+        <li className="dropdown__list">
+          <button
+            onClick={() => {
+              openCart();
+              closeNav();
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
+              padding: '8px',
+              color: '#fff',
+              fontSize: '18px',
+              width: '100%',
+              textAlign: 'left',
+              margin: '10px 0',
+            }}
+          >
+            <FaShoppingCart style={{ marginRight: '8px' }} />
+            Cart {itemCount > 0 && `(${itemCount})`}
+          </button>
         </li>
         <li className="dropdown__list">
           <SignedOut>

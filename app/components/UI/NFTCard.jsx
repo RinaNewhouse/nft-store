@@ -4,6 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import CountdownTimer from './CountdownTimer';
+import StripeCheckout from '../StripeCheckout';
+import { SignInButton, useUser } from '@clerk/nextjs';
+import { useCart } from '../../contexts/CartContext';
+import { useEthPrice } from '../../hooks/useEthPrice';
 
 // Skeleton component for loading state
 const NFTCardSkeleton = () => {
@@ -40,6 +44,10 @@ const NFTCardSkeleton = () => {
 };
 
 const NFTCard = ({ nftData, loading = false }) => {
+  const { isSignedIn } = useUser();
+  const { addItem } = useCart();
+  const { ethPrice, convertEthToUsd, ensureMinimumPrice } = useEthPrice();
+
   if (loading) {
     return <NFTCardSkeleton />;
   }
@@ -55,6 +63,31 @@ const NFTCard = ({ nftData, loading = false }) => {
   const handleAuthorImageError = (e) => {
     e.target.src = '/images/author_thumbnail.jpg';
   };
+
+  const handleBuyClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // The StripeCheckout component will handle the rest
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const priceETH = parseFloat(nftData.price) || 0;
+    const priceUSD = ensureMinimumPrice(convertEthToUsd(priceETH));
+    
+    addItem({
+      nftId: nftData.nftId || nftData.id,
+      title: nftData.title || 'Untitled NFT',
+      image: nftData.nftImage || nftData.image || '/images/nftImage.jpg',
+      priceETH,
+      priceUSD,
+    });
+  };
+
+  const priceETH = parseFloat(nftData.price) || 0;
+  const priceUSD = ethPrice ? ensureMinimumPrice(convertEthToUsd(priceETH)) : 0;
 
   return (
     <div className="nft__item" data-aos="fade-up" data-aos-delay="100">
@@ -85,7 +118,21 @@ const NFTCard = ({ nftData, loading = false }) => {
       <div className="nft__item_wrap">
         <div className="nft__item_extra">
           <div className="nft__item_buttons">
-            <button>Buy Now</button>
+            <div onClick={handleBuyClick} style={{ width: '100%', marginBottom: '8px' }}>
+              <StripeCheckout
+                price={priceUSD}
+                nftId={nftData.nftId || nftData.id}
+                nftTitle={nftData.title}
+                nftImage={nftData.nftImage || nftData.image}
+              />
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className="btn-main"
+              style={{ width: '100%', marginBottom: '8px', fontSize: '14px', padding: '8px 20px' }}
+            >
+              Add to Cart
+            </button>
             <div className="nft__item_share">
               <h4>Share</h4>
               <a href="" target="_blank" rel="noreferrer">
@@ -101,10 +148,10 @@ const NFTCard = ({ nftData, loading = false }) => {
           </div>
         </div>
                   <Link 
-            href={`/item-details/${nftData.nftId}`}
+            href={`/item-details/${nftData.nftId || nftData.id}`}
           >
             <Image 
-              src={nftData.nftImage || '/images/nftImage.jpg'} 
+              src={nftData.nftImage || nftData.image || '/images/nftImage.jpg'} 
               className="lazy nft__item_preview" 
               alt={nftData.title || 'NFT'}
               width={300}
@@ -119,7 +166,14 @@ const NFTCard = ({ nftData, loading = false }) => {
           >
             <h4>{nftData.title || ''}</h4>
           </Link>
-        <div className="nft__item_price">{nftData.price || 0} ETH</div>
+        <div className="nft__item_price">
+          {priceETH} ETH
+          {ethPrice && priceUSD > 0 && (
+            <span style={{ color: '#999', marginLeft: '8px', fontSize: '14px' }}>
+              (${priceUSD.toFixed(2)})
+            </span>
+          )}
+        </div>
         <div className="nft__item_like">
           <i className="fa fa-heart"></i>
           <span>{nftData.likes || 0}</span>

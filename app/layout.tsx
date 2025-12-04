@@ -9,8 +9,10 @@ import {
 } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/react';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { CartProvider } from './contexts/CartContext';
 import Nav from './components/Nav.jsx';
 import Footer from './components/Footer.jsx';
+import Cart from './components/Cart';
 import AOSInit from './components/AOSInit.jsx';
 import './globals.css';
 import './styles/styles/bootstrap.min.css';
@@ -51,15 +53,18 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <AOSInit />
-          <Nav />
-          {children}
-          <Footer />
-          <Analytics />
-        </body>
-      </html>
+      <CartProvider>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <AOSInit />
+            <Nav />
+            {children}
+            <Footer />
+            <Cart />
+            <Analytics />
+          </body>
+        </html>
+      </CartProvider>
     </ClerkProvider>
   );
 }

@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import StripeCheckout from "../../components/StripeCheckout";
+import { useCart } from "../../contexts/CartContext";
+import { useEthPrice } from "../../hooks/useEthPrice";
 
 export default function ItemDetails() {
   const params = useParams();
@@ -11,6 +14,8 @@ export default function ItemDetails() {
   const [nftData, setNftData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { addItem } = useCart();
+  const { ethPrice, convertEthToUsd, ensureMinimumPrice } = useEthPrice();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -265,6 +270,48 @@ export default function ItemDetails() {
                     <div className="nft-item-price">
                       <Image src="/images/ethereum.svg" alt="" width={20} height={20} />
                       <span>{nftData.price || '0'}</span>
+                      {ethPrice && (() => {
+                        const priceETH = parseFloat(nftData.price) || 0;
+                        const priceUSD = ensureMinimumPrice(convertEthToUsd(priceETH));
+                        return (
+                          <span style={{ color: '#999', marginLeft: '8px', fontSize: '16px' }}>
+                            (${priceUSD.toFixed(2)})
+                          </span>
+                        );
+                      })()}
+                    </div>
+                    <div className="spacer-20"></div>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                      <div style={{ flex: '1', minWidth: '150px' }}>
+                        <StripeCheckout
+                          price={(() => {
+                            const priceETH = parseFloat(nftData.price) || 0;
+                            return ensureMinimumPrice(convertEthToUsd(priceETH));
+                          })()}
+                          nftId={nftData.nftId || nftData.id}
+                          nftTitle={nftData.title}
+                          nftImage={nftData.nftImage || nftData.image}
+                        />
+                      </div>
+                      <div style={{ flex: '1', minWidth: '150px' }}>
+                        <button
+                          onClick={() => {
+                            const priceETH = parseFloat(nftData.price) || 0;
+                            const priceUSD = ensureMinimumPrice(convertEthToUsd(priceETH));
+                            addItem({
+                              nftId: nftData.nftId || nftData.id,
+                              title: nftData.title || 'Untitled NFT',
+                              image: nftData.nftImage || nftData.image || '/images/nftImage.jpg',
+                              priceETH,
+                              priceUSD,
+                            });
+                          }}
+                          className="btn-main"
+                          style={{ width: '100%', padding: '8px 20px', fontSize: '14px' }}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
