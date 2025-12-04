@@ -1,24 +1,31 @@
 import { type Metadata } from 'next';
-import { ClerkProvider } from '@clerk/nextjs';
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/react';
 import { Geist, Geist_Mono } from 'next/font/google';
-import Nav from './components/Nav';
-import Footer from './components/Footer';
-import AOSInit from './components/AOSInit';
+import Nav from './components/Nav.jsx';
+import Footer from './components/Footer.jsx';
+import AOSInit from './components/AOSInit.jsx';
 import './globals.css';
-import './styles/bootstrap.min.css';
-import './styles/bootstrap-grid.min.css';
-import './styles/bootstrap-reboot.min.css';
-import './styles/animate.css';
-import './styles/magnific-popup.css';
-import './styles/jquery.countdown.css';
+import './styles/styles/bootstrap.min.css';
+import './styles/styles/bootstrap-grid.min.css';
+import './styles/styles/bootstrap-reboot.min.css';
+import './styles/styles/animate.css';
+import './styles/styles/magnific-popup.css';
+import './styles/styles/jquery.countdown.css';
 // Import font CSS files before style.css
 import './styles/fonts/font-awesome/css/font-awesome.css';
 import './styles/fonts/elegant_font/HTML_CSS/style.css';
 import './styles/fonts/et-line-font/style.css';
-import './styles/style.css';
+import './styles/styles/style.css';
 import './styles/colors/scheme-01.css';
-import './styles/coloring.css';
+import './styles/styles/coloring.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -45,7 +52,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <AOSInit />
           <Nav />
           {children}
@@ -56,4 +63,3 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
-

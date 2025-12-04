@@ -8,7 +8,7 @@ import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@cl
 
 const Nav = () => {
   const openNav = () => {
-    document.body.classList += "menu__open";
+    document.body.classList += " menu__open";
   };
 
   const closeNav = () => {
@@ -25,7 +25,7 @@ const Nav = () => {
                 <div className="de-flex-col">
                   <div id="logo">
                     <Link href="/">
-                      <Image alt="" className="logo-2" src="/images/Ultraverse.png" width={150} height={50} />
+                      <Image alt="" className="logo-2" src="/images/Ultraverse.png" width={150} height={40} />
                     </Link>
                   </div>
                 </div>
@@ -60,7 +60,7 @@ const Nav = () => {
                       </SignInButton>
                     </SignedOut>
                     <SignedIn>
-                      <UserButton 
+                      <UserButton
                         appearance={{
                           elements: {
                             avatarBox: "w-10 h-10",
@@ -117,3 +117,4 @@ const Nav = () => {
 };
 
 export default Nav;
+

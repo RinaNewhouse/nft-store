@@ -160,7 +160,7 @@ const Footer = () => {
               <div className="de-flex footer__wrapper">
                 <div className="de-flex-col">
                   <Link className="footer__link" href="/">
-                    <Image alt="" className="f-logo" src="/images/Ultraverse.png" width={150} height={50} />
+                    <Image alt="" className="f-logo" src="/images/Ultraverse.png" width={120} height={50} />
                     <span className="copy">&copy; Copyright 2022</span>
                   </Link>
                 </div>
@@ -174,3 +174,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

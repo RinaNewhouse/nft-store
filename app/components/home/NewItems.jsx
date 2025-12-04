@@ -31,19 +31,6 @@ const NewItems = () => {
     fetchNewItems();
   }, []);
 
-  // Custom arrow components to prevent React warnings
-  const PrevArrow = ({ onClick }) => (
-    <button className="slick-prev" type="button" onClick={onClick}>
-      <i className="fa fa-angle-left"></i>
-    </button>
-  );
-
-  const NextArrow = ({ onClick }) => (
-    <button className="slick-next" type="button" onClick={onClick}>
-      <i className="fa fa-angle-right"></i>
-    </button>
-  );
-
   // Slick Carousel Settings
   const carouselSettings = {
     dots: false,
@@ -53,8 +40,8 @@ const NewItems = () => {
     slidesToScroll: 1,
     pauseOnHover: true,
     arrows: true,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
+    prevArrow: <button className="slick-prev" type="button"><i className="fa fa-angle-left"></i></button>,
+    nextArrow: <button className="slick-next" type="button"><i className="fa fa-angle-right"></i></button>,
     responsive: [
       {
         breakpoint: 1200,
