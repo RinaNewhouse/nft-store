@@ -58,17 +58,8 @@ export default function StripeCheckout({ price, nftId, nftTitle, nftImage, onSuc
       if (data.url) {
         // Use the checkout URL directly
         window.location.href = data.url;
-      } else if (data.sessionId) {
-        // Fallback: use Stripe.js redirect
-        const stripe = await stripePromise;
-        if (stripe) {
-          const result = await (stripe as any).redirectToCheckout({
-            sessionId: data.sessionId,
-          });
-          if (result?.error) {
-            throw new Error(result.error.message);
-          }
-        }
+      } else {
+        throw new Error('No checkout URL received from server');
       }
     } catch (error: any) {
       console.error('Checkout error:', error);
